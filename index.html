@@ -59,7 +59,7 @@
     <div id="intro-modal" class="fixed inset-0 flex items-center justify-center p-6">
         <div class="max-w-md w-full border border-pink-500 p-8 rounded-2xl text-center space-y-4 bg-slate-900/50">
             <h2 class="text-2xl font-bold text-pink-500 uppercase italic">Connection Established</h2>
-            <p class="text-sm text-pink-200/80 italic">The network is expanding. Hover over nodes to trace their origin. Tap to decrypt.</p>
+            <p class="text-sm text-pink-200/80 italic">This is a living map of the things we left unsaid. Whether it was a glance in the library or a conversation cut short at the station, this network is a space to digitize those missed connections.</p>
             <button onclick="closeModal('intro-modal')" class="w-full bg-pink-700 hover:bg-pink-500 py-3 rounded-lg font-bold tracking-widest transition-all">ENTER_NETWORK</button>
         </div>
     </div>
@@ -185,6 +185,19 @@
             container.appendChild(nodeGroup);
         }
 
+        function showToast(message) {
+    const toast = document.getElementById('toast');
+    toast.innerText = message;
+    toast.classList.remove('opacity-0', 'translate-y-2');
+    toast.classList.add('opacity-100', '-translate-y-2');
+
+    // Hide it after 3 seconds
+    setTimeout(() => {
+        toast.classList.add('opacity-0', 'translate-y-2');
+        toast.classList.remove('opacity-100', '-translate-y-2');
+    }, 3000);
+}
+
         async function init() {
             const { data } = await _supabase.from('missed_connections').select('*').order('created_at', { ascending: true });
             if (data) data.forEach(msg => createNode(msg));
@@ -194,11 +207,17 @@
 
         document.getElementById('send-btn').onclick = async () => {
             const t = document.getElementById('target').value, l = document.getElementById('location').value, m = document.getElementById('message').value;
-            if (!t || !l || !m) return alert("All fields required.");
+            if (!t || !l || !m) {
+        showToast("ACCESS DENIED: Populating all fields required");
+        return; 
+    }
             await _supabase.from('missed_connections').insert([{ target_name: t, location: l, message: m }]);
             document.getElementById('target').value = ''; document.getElementById('location').value = ''; document.getElementById('message').value = '';
         };
         init();
     </script>
+<div id="toast" class="fixed bottom-10 left-1/2 -translate-x-1/2 z-[200] bg-pink-600 text-white px-6 py-3 rounded-full font-bold text-xs uppercase tracking-widest opacity-0 transition-all duration-500 pointer-events-none border border-pink-400 shadow-lg">
+    Please fill all fields
+</div>
 </body>
 </html>
