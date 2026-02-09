@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
@@ -9,7 +10,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
     <title>Heart-Board World | 2026</title>
-    <meta name="description" content="Heart-Board World is a living, breathing node-map of things left unsaid. A digital archive for missed connections where every message grows the network. Send your whisper into the circuit and watch the tree expand.">
+    <meta name="description"
+        content="Heart-Board World is a living, breathing node-map of things left unsaid. A digital archive for missed connections where every message grows the network. Send your whisper into the circuit and watch the tree expand.">
 
     <meta property="og:url" content="https://heart-board.vercel.app/">
     <meta property="og:type" content="website">
@@ -21,33 +23,73 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap');
-        
-        body { font-family: 'JetBrains Mono', monospace; background-color: #020617; overflow: hidden; touch-action: none; }
-        #world { position: absolute; top: 0; left: 0; width: 100%; height: 100%; transform-origin: center; cursor: grab; transition: transform 0.1s ease-out; }
-        
+
+        body {
+            font-family: 'JetBrains Mono', monospace;
+            background-color: #020617;
+            overflow: hidden;
+            touch-action: none;
+        }
+
+        #world {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            transform-origin: center;
+            cursor: grab;
+            transition: transform 0.1s ease-out;
+        }
+
         /* Thickened Circuit Lines */
-        .circuit-line { 
-            position: absolute; 
-            background: rgba(219, 39, 119, 0.4); 
-            z-index: 1; 
+        .circuit-line {
+            position: absolute;
+            background: rgba(219, 39, 119, 0.4);
+            z-index: 1;
             transition: background 0.3s, box-shadow 0.3s;
         }
-        .draw-h { height: 5px; animation: growH 0.6s ease-out forwards; }
-        .draw-v { width: 5px; animation: growV 0.6s ease-out 0.6s forwards; }
-        
-        @keyframes growH { from { width: 0; } to { width: var(--w); } }
-        @keyframes growV { from { height: 0; } to { height: var(--h); } }
+
+        .draw-h {
+            height: 5px;
+            animation: growH 0.6s ease-out forwards;
+        }
+
+        .draw-v {
+            width: 5px;
+            animation: growV 0.6s ease-out 0.6s forwards;
+        }
+
+        @keyframes growH {
+            from {
+                width: 0;
+            }
+
+            to {
+                width: var(--w);
+            }
+        }
+
+        @keyframes growV {
+            from {
+                height: 0;
+            }
+
+            to {
+                height: var(--h);
+            }
+        }
 
         /* Card Styling & Hover */
-        .heart-card { 
-            opacity: 0; 
-            backdrop-filter: blur(8px); 
-            border: 1px solid rgba(219, 39, 119, 0.3); 
-            animation: fadeInCard 0.5s ease-out 1.2s forwards; 
+        .heart-card {
+            opacity: 0;
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(219, 39, 119, 0.3);
+            animation: fadeInCard 0.5s ease-out 1.2s forwards;
             cursor: pointer;
             transition: all 0.3s ease;
         }
-        
+
         .heart-card:hover {
             border-color: #f472b6;
             background: rgba(219, 39, 119, 0.1);
@@ -62,54 +104,89 @@
             box-shadow: 0 0 12px #db2777;
         }
 
-        @keyframes fadeInCard { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
-        #intro-modal, #detail-modal { backdrop-filter: blur(12px); background: rgba(2, 6, 23, 0.9); z-index: 1000; }
-        
+        @keyframes fadeInCard {
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        #intro-modal,
+        #detail-modal {
+            backdrop-filter: blur(12px);
+            background: rgba(2, 6, 23, 0.9);
+            z-index: 1000;
+        }
+
         /* Mobile UI Fix for blocking clicks */
-        #ui-panel.opacity-0 { pointer-events: none; visibility: hidden; }
+        #ui-panel.opacity-0 {
+            pointer-events: none;
+            visibility: hidden;
+        }
     </style>
 </head>
+
 <body class="text-pink-100 h-screen w-screen">
 
     <div id="intro-modal" class="fixed inset-0 flex items-center justify-center p-6">
-        <div class="max-w-md w-full border border-pink-500 p-8 rounded-2xl text-center space-y-4 bg-slate-900/90 shadow-[0_0_50px_rgba(219,39,119,0.3)]">
-            <h2 class="text-2xl font-bold text-pink-500 uppercase italic tracking-tighter italic">Connection Established</h2>
+        <div
+            class="max-w-md w-full border border-pink-500 p-8 rounded-2xl text-center space-y-4 bg-slate-900/90 shadow-[0_0_50px_rgba(219,39,119,0.3)]">
+            <h2 class="text-2xl font-bold text-pink-500 uppercase italic tracking-tighter italic">Connection Established
+            </h2>
             <div class="text-left space-y-3">
-                <p class="text-xs text-pink-200/80 leading-relaxed">This is a living map of the things we left unsaid. Whether it was a glance in the library or a conversation cut short at the station, this network is a space to digitize those missed connections.</p>
+                <p class="text-xs text-pink-200/80 leading-relaxed">This is a living map of the things we left unsaid.
+                    Whether it was a glance in the library or a conversation cut short at the station, this network is a
+                    space to digitize those missed connections.</p>
             </div>
-            <button onclick="closeModal('intro-modal')" class="w-full bg-pink-700 hover:bg-pink-500 py-3 rounded-lg font-bold tracking-widest transition-all mt-4 border border-pink-400">ENTER_NETWORK</button>
+            <button onclick="closeModal('intro-modal')"
+                class="w-full bg-pink-700 hover:bg-pink-500 py-3 rounded-lg font-bold tracking-widest transition-all mt-4 border border-pink-400">ENTER_NETWORK</button>
         </div>
     </div>
 
     <div id="detail-modal" class="fixed inset-0 hidden flex items-center justify-center p-6">
         <div class="max-w-lg w-full border border-pink-500 bg-slate-900 p-8 rounded-2xl relative">
-            <button onclick="closeModal('detail-modal')" class="absolute top-4 right-4 text-pink-500 text-xl font-bold">✕</button>
+            <button onclick="closeModal('detail-modal')"
+                class="absolute top-4 right-4 text-pink-500 text-xl font-bold">✕</button>
             <div id="detail-content" class="space-y-4"></div>
         </div>
     </div>
 
     <div id="world">
         <div id="origin" class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50">
-            <div class="bg-pink-600 w-12 h-12 md:w-16 md:h-16 rounded-lg flex items-center justify-center border-2 border-pink-400 shadow-[0_0_20px_#db2777]">
+            <div
+                class="bg-pink-600 w-12 h-12 md:w-16 md:h-16 rounded-lg flex items-center justify-center border-2 border-pink-400 shadow-[0_0_20px_#db2777]">
                 <span class="text-xl md:text-2xl">❤️</span>
             </div>
         </div>
         <div id="network-container" class="relative w-full h-full"></div>
     </div>
 
-    <button onclick="toggleUI()" class="fixed bottom-6 right-6 z-[60] bg-pink-700 p-4 rounded-full shadow-lg md:hidden">💬</button>
+    <button onclick="toggleUI()"
+        class="fixed bottom-6 right-6 z-[60] bg-pink-700 p-4 rounded-full shadow-lg md:hidden">💬</button>
 
-    <div id="ui-panel" class="absolute top-4 right-4 left-4 md:left-auto md:w-72 z-50 bg-slate-900/95 p-5 rounded-xl border border-pink-900/50 backdrop-blur-md transition-all duration-300">
+    <div id="ui-panel"
+        class="absolute top-4 right-4 left-4 md:left-auto md:w-72 z-50 bg-slate-900/95 p-5 rounded-xl border border-pink-900/50 backdrop-blur-md transition-all duration-300">
         <div class="space-y-3">
-            <input id="target" type="text" placeholder="Who?" class="w-full bg-slate-800 border-b border-pink-900 p-2 text-sm outline-none focus:border-pink-500">
-            <input id="location" type="text" placeholder="Where?" class="w-full bg-slate-800 border-b border-pink-900 p-2 text-sm outline-none focus:border-pink-500">
-            <textarea id="message" placeholder="Message..." class="w-full bg-slate-800 border-b border-pink-900 p-2 text-sm outline-none focus:border-pink-500 h-20 resize-none"></textarea>
-            <button id="send-btn" class="w-full bg-pink-700 hover:bg-pink-600 text-white text-xs font-bold py-3 rounded uppercase tracking-widest transition-all">Transmit</button>
-            <button onclick="resetCamera()" class="w-full py-1 text-[10px] text-pink-900 border border-pink-900 rounded">Center_View</button>
+            <input id="target" type="text" placeholder="Who?"
+                class="w-full bg-slate-800 border-b border-pink-900 p-2 text-sm outline-none focus:border-pink-500">
+            <input id="location" type="text" placeholder="Where?"
+                class="w-full bg-slate-800 border-b border-pink-900 p-2 text-sm outline-none focus:border-pink-500">
+            <textarea id="message" placeholder="Message..."
+                class="w-full bg-slate-800 border-b border-pink-900 p-2 text-sm outline-none focus:border-pink-500 h-20 resize-none"></textarea>
+            <button id="send-btn"
+                class="w-full bg-pink-700 hover:bg-pink-600 text-white text-xs font-bold py-3 rounded uppercase tracking-widest transition-all">Transmit</button>
+            <button onclick="resetCamera()"
+                class="w-full py-1 text-[10px] text-pink-900 border border-pink-900 rounded">Center_View</button>
         </div>
     </div>
 
-    <div id="toast" class="fixed bottom-10 left-1/2 -translate-x-1/2 z-[200] bg-pink-600 text-white px-6 py-3 rounded-full font-bold text-xs uppercase tracking-widest opacity-0 transition-all duration-500 pointer-events-none border border-pink-400 shadow-lg">
+    <div id="toast"
+        class="fixed bottom-10 left-1/2 -translate-x-1/2 z-[200] bg-pink-600 text-white px-6 py-3 rounded-full font-bold text-xs uppercase tracking-widest opacity-0 transition-all duration-500 pointer-events-none border border-pink-400 shadow-lg">
         Notification Message
     </div>
 
@@ -121,7 +198,7 @@
         let nodeCount = 0;
 
         function closeModal(id) { document.getElementById(id).style.display = 'none'; }
-        
+
         function toggleUI() {
             const panel = document.getElementById('ui-panel');
             panel.classList.toggle('opacity-0');
@@ -183,7 +260,7 @@
             nodeCount++;
             const container = document.getElementById('network-container');
             const goldenAngle = 137.5 * (Math.PI / 180);
-            const r = 200 * Math.sqrt(nodeCount); 
+            const r = 200 * Math.sqrt(nodeCount);
             const theta = nodeCount * goldenAngle;
             const targetX = r * Math.cos(theta);
             const targetY = r * Math.sin(theta);
@@ -193,7 +270,7 @@
 
             const card = document.createElement('div');
             card.className = "heart-card absolute p-3 bg-slate-900/90 rounded-lg w-44 text-left z-20 pointer-events-auto";
-            card.style.left = `${targetX - 88}px`; 
+            card.style.left = `${targetX - 88}px`;
             card.style.top = `${targetY - 30}px`;
             card.innerHTML = `
                 <div class="text-pink-500 font-bold text-[8px] uppercase tracking-tighter">>> ${data.target_name}</div>
@@ -205,7 +282,7 @@
             const linePair = document.createElement('div');
             const hLine = document.createElement('div'); hLine.className = "circuit-line draw-h"; hLine.style.setProperty('--w', `${Math.abs(targetX)}px`); hLine.style.left = targetX > 0 ? "0px" : `${targetX}px`; hLine.style.transformOrigin = targetX > 0 ? "left" : "right";
             const vLine = document.createElement('div'); vLine.className = "circuit-line draw-v"; vLine.style.setProperty('--h', `${Math.abs(targetY)}px`); vLine.style.left = `${targetX}px`; vLine.style.top = targetY > 0 ? "0px" : `${targetY}px`; vLine.style.transformOrigin = targetY > 0 ? "top" : "bottom";
-            
+
             linePair.appendChild(hLine); linePair.appendChild(vLine);
             nodeGroup.appendChild(card); nodeGroup.appendChild(linePair);
             container.appendChild(nodeGroup);
@@ -219,15 +296,52 @@
         _supabase.channel('any').on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'missed_connections' }, p => createNode(p.new)).subscribe();
 
         document.getElementById('send-btn').onclick = async () => {
-            const t = document.getElementById('target').value, l = document.getElementById('location').value, m = document.getElementById('message').value;
-            if (!t || !l || !m) return showToast("⚠️ ERROR: Fields incomplete");
-            const { error } = await _supabase.from('missed_connections').insert([{ target_name: t, location: l, message: m }]);
+    const t = document.getElementById('target').value;
+    const l = document.getElementById('location').value;
+    const m = document.getElementById('message').value;
+
+    // 1. Basic empty field check
+    if (!t || !l || !m) return showToast("⚠️ ERROR: Fields incomplete");
+
+    // 2. Visual feedback using your existing bar
+    showToast("🔍 SCANNING PACKET VIBE...");
+
+    try {
+        // 3. Ask your Vercel /api/moderate.js bouncer
+        const response = await fetch('/api/moderate', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ message: m })
+        });
+
+        const data = await response.json();
+
+        if (data.isSafe) {
+            // 4. If AI says PASS, send to Supabase
+            const { error } = await _supabase.from('missed_connections').insert([
+                { target_name: t, location: l, message: m }
+            ]);
+
             if (!error) {
                 showToast("✅ CONNECTION BROADCASTED");
-                document.getElementById('target').value = ''; document.getElementById('location').value = ''; document.getElementById('message').value = '';
+                // Clear the inputs
+                document.getElementById('target').value = ''; 
+                document.getElementById('location').value = ''; 
+                document.getElementById('message').value = '';
+            } else {
+                showToast("⚠️ DATABASE ERROR");
             }
-        };
+        } else {
+            // 5. If AI says REJECT
+            showToast("🚫 REJECTED: DOES NOT FIT THE MOOD");
+        }
+    } catch (err) {
+        console.error("Connection failed:", err);
+        showToast("⚠️ SYSTEM ERROR: AI OFFLINE");
+    }
+};
         init();
     </script>
 </body>
+
 </html>
