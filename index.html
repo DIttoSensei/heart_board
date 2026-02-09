@@ -301,10 +301,10 @@
     const m = document.getElementById('message').value;
 
     // 1. Basic empty field check
-    if (!t || !l || !m) return showToast("⚠️ ERROR: Fields incomplete");
+    if (!t || !l || !m) return showToast("ERROR: Fields incomplete");
 
     // 2. Visual feedback using your existing bar
-    showToast("🔍 SCANNING PACKET VIBE...");
+    showToast("SCANNING PACKET VIBE...");
 
     try {
         // 3. Ask your Vercel /api/moderate.js bouncer
@@ -323,21 +323,21 @@
             ]);
 
             if (!error) {
-                showToast("✅ CONNECTION BROADCASTED");
+                showToast("CONNECTION BROADCASTED");
                 // Clear the inputs
                 document.getElementById('target').value = ''; 
                 document.getElementById('location').value = ''; 
                 document.getElementById('message').value = '';
             } else {
-                showToast("⚠️ DATABASE ERROR");
+                showToast("DATABASE ERROR");
             }
         } else {
             // 5. If AI says REJECT
-            showToast("🚫 REJECTED: DOES NOT FIT THE MOOD");
+            showToast("REJECTED: DOES NOT FIT THE MOOD");
         }
     } catch (err) {
         console.error("Connection failed:", err);
-        showToast("⚠️ SYSTEM ERROR: AI OFFLINE");
+        showToast("SYSTEM ERROR: AI OFFLINE");
     }
 };
         init();
