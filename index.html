@@ -11,20 +11,11 @@
     <title>Heart-Board World | 2026</title>
     <meta name="description" content="Heart-Board World is a living, breathing node-map of things left unsaid. A digital archive for missed connections where every message grows the network. Send your whisper into the circuit and watch the tree expand.">
 
-    <!-- Facebook Meta Tags -->
     <meta property="og:url" content="https://heart-board.vercel.app/">
     <meta property="og:type" content="website">
     <meta property="og:title" content="Heart-Board World | 2026">
-    <meta property="og:description" content="Heart-Board World is a living, breathing node-map of things left unsaid. A digital archive for missed connections where every message grows the network. Send your whisper into the circuit and watch the tree expand.">
+    <meta property="og:description" content="Heart-Board World is a living, breathing node-map of things left unsaid.">
     <meta property="og:image" content="https://heart-board.vercel.app/assets/preview_image.png">
-
-    <!-- Twitter Meta Tags -->
-    <meta name="twitter:card" content="summary_large_image">
-    <meta property="twitter:domain" content="heart-board.vercel.app">
-    <meta property="twitter:url" content="https://heart-board.vercel.app/">
-    <meta name="twitter:title" content="Heart-Board World | 2026">
-    <meta name="twitter:description" content="Heart-Board World is a living, breathing node-map of things left unsaid. A digital archive for missed connections where every message grows the network. Send your whisper into the circuit and watch the tree expand.">
-    <meta name="twitter:image" content="https://heart-board.vercel.app/assets/preview_image.png">
 
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -34,7 +25,7 @@
         body { font-family: 'JetBrains Mono', monospace; background-color: #020617; overflow: hidden; touch-action: none; }
         #world { position: absolute; top: 0; left: 0; width: 100%; height: 100%; transform-origin: center; cursor: grab; transition: transform 0.1s ease-out; }
         
-        /* Circuit Lines */
+        /* Thickened Circuit Lines */
         .circuit-line { 
             position: absolute; 
             background: rgba(219, 39, 119, 0.4); 
@@ -57,7 +48,6 @@
             transition: all 0.3s ease;
         }
         
-        /* HOVER EFFECTS */
         .heart-card:hover {
             border-color: #f472b6;
             background: rgba(219, 39, 119, 0.1);
@@ -66,23 +56,28 @@
             z-index: 100;
         }
 
-        /* Highlight lines when card is hovered */
-        .heart-card:hover + .line-pair .circuit-line {
+        /* Hover interaction for lines */
+        .node-group:hover .circuit-line {
             background: #f472b6;
             box-shadow: 0 0 12px #db2777;
         }
 
         @keyframes fadeInCard { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
         #intro-modal, #detail-modal { backdrop-filter: blur(12px); background: rgba(2, 6, 23, 0.9); z-index: 1000; }
+        
+        /* Mobile UI Fix for blocking clicks */
+        #ui-panel.opacity-0 { pointer-events: none; visibility: hidden; }
     </style>
 </head>
 <body class="text-pink-100 h-screen w-screen">
 
     <div id="intro-modal" class="fixed inset-0 flex items-center justify-center p-6">
-        <div class="max-w-md w-full border border-pink-500 p-8 rounded-2xl text-center space-y-4 bg-slate-900/50">
-            <h2 class="text-2xl font-bold text-pink-500 uppercase italic">Connection Established</h2>
-            <p class="text-sm text-pink-200/80 italic">This is a living map of the things we left unsaid. Whether it was a glance in the library or a conversation cut short at the station, this network is a space to digitize those missed connections.</p>
-            <button onclick="closeModal('intro-modal')" class="w-full bg-pink-700 hover:bg-pink-500 py-3 rounded-lg font-bold tracking-widest transition-all">ENTER_NETWORK</button>
+        <div class="max-w-md w-full border border-pink-500 p-8 rounded-2xl text-center space-y-4 bg-slate-900/90 shadow-[0_0_50px_rgba(219,39,119,0.3)]">
+            <h2 class="text-2xl font-bold text-pink-500 uppercase italic tracking-tighter italic">Connection Established</h2>
+            <div class="text-left space-y-3">
+                <p class="text-xs text-pink-200/80 leading-relaxed">This is a living map of the things we left unsaid. Whether it was a glance in the library or a conversation cut short at the station, this network is a space to digitize those missed connections.</p>
+            </div>
+            <button onclick="closeModal('intro-modal')" class="w-full bg-pink-700 hover:bg-pink-500 py-3 rounded-lg font-bold tracking-widest transition-all mt-4 border border-pink-400">ENTER_NETWORK</button>
         </div>
     </div>
 
@@ -95,23 +90,27 @@
 
     <div id="world">
         <div id="origin" class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50">
-            <div class="bg-pink-600 w-12 h-12 md:w-16 md:h-16 rounded-lg flex items-center justify-center border-2 border-pink-400">
+            <div class="bg-pink-600 w-12 h-12 md:w-16 md:h-16 rounded-lg flex items-center justify-center border-2 border-pink-400 shadow-[0_0_20px_#db2777]">
                 <span class="text-xl md:text-2xl">❤️</span>
             </div>
         </div>
         <div id="network-container" class="relative w-full h-full"></div>
     </div>
 
-    <button onclick="toggleUI()" class="fixed bottom-6 right-6 z-[60] bg-pink-700 p-4 rounded-full md:hidden">💬</button>
+    <button onclick="toggleUI()" class="fixed bottom-6 right-6 z-[60] bg-pink-700 p-4 rounded-full shadow-lg md:hidden">💬</button>
 
-    <div id="ui-panel" class="absolute top-4 right-4 left-4 md:left-auto md:w-72 z-50 bg-slate-900/95 p-5 rounded-xl border border-pink-900/50 backdrop-blur-md">
+    <div id="ui-panel" class="absolute top-4 right-4 left-4 md:left-auto md:w-72 z-50 bg-slate-900/95 p-5 rounded-xl border border-pink-900/50 backdrop-blur-md transition-all duration-300">
         <div class="space-y-3">
             <input id="target" type="text" placeholder="Who?" class="w-full bg-slate-800 border-b border-pink-900 p-2 text-sm outline-none focus:border-pink-500">
             <input id="location" type="text" placeholder="Where?" class="w-full bg-slate-800 border-b border-pink-900 p-2 text-sm outline-none focus:border-pink-500">
             <textarea id="message" placeholder="Message..." class="w-full bg-slate-800 border-b border-pink-900 p-2 text-sm outline-none focus:border-pink-500 h-20 resize-none"></textarea>
-            <button id="send-btn" class="w-full bg-pink-700 hover:bg-pink-600 text-white text-xs font-bold py-3 rounded uppercase tracking-widest">Transmit</button>
+            <button id="send-btn" class="w-full bg-pink-700 hover:bg-pink-600 text-white text-xs font-bold py-3 rounded uppercase tracking-widest transition-all">Transmit</button>
             <button onclick="resetCamera()" class="w-full py-1 text-[10px] text-pink-900 border border-pink-900 rounded">Center_View</button>
         </div>
+    </div>
+
+    <div id="toast" class="fixed bottom-10 left-1/2 -translate-x-1/2 z-[200] bg-pink-600 text-white px-6 py-3 rounded-full font-bold text-xs uppercase tracking-widest opacity-0 transition-all duration-500 pointer-events-none border border-pink-400 shadow-lg">
+        Notification Message
     </div>
 
     <script>
@@ -122,23 +121,38 @@
         let nodeCount = 0;
 
         function closeModal(id) { document.getElementById(id).style.display = 'none'; }
-        function toggleUI() { document.getElementById('ui-panel').classList.toggle('opacity-0'); }
+        
+        function toggleUI() {
+            const panel = document.getElementById('ui-panel');
+            panel.classList.toggle('opacity-0');
+        }
+
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.innerText = message;
+            toast.classList.remove('opacity-0');
+            toast.classList.add('opacity-100', '-translate-y-2');
+            setTimeout(() => {
+                toast.classList.add('opacity-0');
+                toast.classList.remove('opacity-100', '-translate-y-2');
+            }, 3000);
+        }
 
         function openDetail(data) {
             const modal = document.getElementById('detail-modal');
             const content = document.getElementById('detail-content');
             content.innerHTML = `
-                <div class="text-pink-500 font-bold text-xs uppercase mb-2">>> Packet_Recovered</div>
+                <div class="text-pink-500 font-bold text-xs uppercase mb-2">>> Connection_Details</div>
                 <div class="border-l-2 border-pink-700 pl-4 space-y-1 mb-4">
                     <p class="text-pink-400 text-xs">TARGET: <span class="text-white">${data.target_name}</span></p>
-                    <p class="text-pink-400 text-xs">LOCATION: <span class="text-white">${data.location}</span></p>
+                    <p class="text-pink-400 text-xs">LOC: <span class="text-white">${data.location}</span></p>
                 </div>
-                <p class="text-pink-100 text-sm leading-relaxed bg-slate-800 p-4 rounded">${data.message}</p>
+                <p class="text-pink-100 text-sm leading-relaxed bg-slate-800 p-4 rounded border border-pink-900/20">${data.message}</p>
             `;
             modal.style.display = 'flex';
         }
 
-        // --- CAMERA SYSTEM ---
+        // --- CAMERA ---
         let isDragging = false, startX, startY, translateX = 0, translateY = 0, scale = 1, initialPinchDistance = null;
         const world = document.getElementById('world');
         const updateTransform = () => world.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scale})`;
@@ -164,26 +178,22 @@
         window.addEventListener('mouseup', () => isDragging = false);
         window.addEventListener('touchend', () => { isDragging = false; initialPinchDistance = null; });
 
-        // --- ANTI-OVERLAP CREATION LOGIC ---
+        // --- NODE TREE ---
         function createNode(data) {
             nodeCount++;
             const container = document.getElementById('network-container');
-            
-            // Fibonacci Spiral approach to prevent overlap
             const goldenAngle = 137.5 * (Math.PI / 180);
-            const r = 180 * Math.sqrt(nodeCount); // Radius expands as count increases
+            const r = 200 * Math.sqrt(nodeCount); 
             const theta = nodeCount * goldenAngle;
-
             const targetX = r * Math.cos(theta);
             const targetY = r * Math.sin(theta);
 
-            // Lines and Card Wrapper
             const nodeGroup = document.createElement('div');
-            nodeGroup.className = "absolute top-1/2 left-1/2 pointer-events-none overflow-visible";
+            nodeGroup.className = "node-group absolute top-1/2 left-1/2 pointer-events-none overflow-visible";
 
             const card = document.createElement('div');
             card.className = "heart-card absolute p-3 bg-slate-900/90 rounded-lg w-44 text-left z-20 pointer-events-auto";
-            card.style.left = `${targetX - 88}px`; // Center card on coordinate
+            card.style.left = `${targetX - 88}px`; 
             card.style.top = `${targetY - 30}px`;
             card.innerHTML = `
                 <div class="text-pink-500 font-bold text-[8px] uppercase tracking-tighter">>> ${data.target_name}</div>
@@ -192,33 +202,14 @@
             `;
             card.onclick = (e) => { e.stopPropagation(); openDetail(data); };
 
-            // Lines
             const linePair = document.createElement('div');
-            linePair.className = "line-pair";
             const hLine = document.createElement('div'); hLine.className = "circuit-line draw-h"; hLine.style.setProperty('--w', `${Math.abs(targetX)}px`); hLine.style.left = targetX > 0 ? "0px" : `${targetX}px`; hLine.style.transformOrigin = targetX > 0 ? "left" : "right";
             const vLine = document.createElement('div'); vLine.className = "circuit-line draw-v"; vLine.style.setProperty('--h', `${Math.abs(targetY)}px`); vLine.style.left = `${targetX}px`; vLine.style.top = targetY > 0 ? "0px" : `${targetY}px`; vLine.style.transformOrigin = targetY > 0 ? "top" : "bottom";
             
-            linePair.appendChild(hLine);
-            linePair.appendChild(vLine);
-            
-            // We append card first so the CSS selector (+) works
-            nodeGroup.appendChild(card);
-            nodeGroup.appendChild(linePair);
+            linePair.appendChild(hLine); linePair.appendChild(vLine);
+            nodeGroup.appendChild(card); nodeGroup.appendChild(linePair);
             container.appendChild(nodeGroup);
         }
-
-        function showToast(message) {
-    const toast = document.getElementById('toast');
-    toast.innerText = message;
-    toast.classList.remove('opacity-0', 'translate-y-2');
-    toast.classList.add('opacity-100', '-translate-y-2');
-
-    // Hide it after 3 seconds
-    setTimeout(() => {
-        toast.classList.add('opacity-0', 'translate-y-2');
-        toast.classList.remove('opacity-100', '-translate-y-2');
-    }, 3000);
-}
 
         async function init() {
             const { data } = await _supabase.from('missed_connections').select('*').order('created_at', { ascending: true });
@@ -229,17 +220,14 @@
 
         document.getElementById('send-btn').onclick = async () => {
             const t = document.getElementById('target').value, l = document.getElementById('location').value, m = document.getElementById('message').value;
-            if (!t || !l || !m) {
-        showToast("ACCESS DENIED: Populating all fields required");
-        return; 
-    }
-            await _supabase.from('missed_connections').insert([{ target_name: t, location: l, message: m }]);
-            document.getElementById('target').value = ''; document.getElementById('location').value = ''; document.getElementById('message').value = '';
+            if (!t || !l || !m) return showToast("⚠️ ERROR: Fields incomplete");
+            const { error } = await _supabase.from('missed_connections').insert([{ target_name: t, location: l, message: m }]);
+            if (!error) {
+                showToast("✅ CONNECTION BROADCASTED");
+                document.getElementById('target').value = ''; document.getElementById('location').value = ''; document.getElementById('message').value = '';
+            }
         };
         init();
     </script>
-<div id="toast" class="fixed bottom-10 left-1/2 -translate-x-1/2 z-[200] bg-pink-600 text-white px-6 py-3 rounded-full font-bold text-xs uppercase tracking-widest opacity-0 transition-all duration-500 pointer-events-none border border-pink-400 shadow-lg">
-    Please fill all fields
-</div>
 </body>
 </html>
